@@ -1,10 +1,18 @@
 :root {
-    --bg: #050505;
-    --card-bg: #111111;
+    --bg: #000000;
+    --card-bg: rgba(10, 10, 10, 0.8);
     --text: #ffffff;
-    --accent: #00d4ff;
-    --accent-dim: rgba(0, 212, 255, 0.3);
-    --font-main: 'JetBrains Mono', monospace; /* Great for a high-IQ/dev feel */
+    --accent: #00d4ff; /* Electric Blue */
+    --accent-dim: rgba(0, 212, 255, 0.15);
+    --font-main: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+#matrixCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    opacity: 0.3;
 }
 
 body {
@@ -15,78 +23,55 @@ body {
     overflow-x: hidden;
 }
 
-.glow-bg {
-    position: fixed;
-    top: -10%;
-    left: -10%;
-    width: 40%;
-    height: 40%;
-    background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
-    filter: blur(80px);
-    z-index: -1;
-}
-
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 2rem 10%;
+    backdrop-filter: blur(5px);
 }
 
-.logo { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; }
-.logo span { color: var(--accent); }
+.logo { font-size: 1.8rem; font-weight: 800; text-transform: uppercase; }
+.logo span { color: var(--accent); border-bottom: 3px solid var(--accent); }
 
 .nav-links { list-style: none; display: flex; gap: 3rem; }
-.nav-links a { text-decoration: none; color: #888; transition: 0.3s; font-size: 0.9rem; }
+.nav-links a { text-decoration: none; color: #888; font-size: 0.8rem; letter-spacing: 2px; }
 .nav-links a:hover { color: var(--accent); }
 
 .hero {
-    height: 90vh;
+    height: 80vh;
     display: flex;
     align-items: center;
     padding: 0 10%;
 }
 
-.badge {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    border: 1px solid #333;
-    border-radius: 50px;
-    font-size: 0.7rem;
-    margin-bottom: 1.5rem;
-    color: var(--accent);
-}
-
-h1 { font-size: 4.5rem; line-height: 1; margin: 0; font-weight: 700; }
-.highlight { color: var(--accent); text-shadow: 0 0 20px var(--accent-dim); }
-
-.container { padding: 8rem 10%; }
-
-.logic-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    margin-top: 4rem;
+h1 { font-size: 5rem; line-height: 0.9; margin: 0; font-weight: 900; }
+.highlight { 
+    color: transparent; 
+    -webkit-text-stroke: 1px var(--accent); 
+    text-shadow: 0 0 15px var(--accent);
 }
 
 .logic-box {
-    border-left: 2px solid #222;
-    padding-left: 2rem;
+    background: var(--card-bg);
+    padding: 2rem;
+    border: 1px solid #111;
+    transition: 0.3s;
 }
 
-.logic-box h4 { color: var(--accent); margin-bottom: 0.5rem; }
+.logic-box:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-dim);
+}
 
 .card {
     background: var(--card-bg);
     padding: 3rem;
     border: 1px solid #222;
-    transition: 0.4s;
+    text-align: center;
 }
 
-.card:hover {
-    border-color: var(--accent);
-    transform: translateY(-10px);
-}
+.icon { font-size: 2rem; color: var(--accent); margin-bottom: 1rem; }
 
 .btn-primary {
     background: var(--accent);
@@ -94,12 +79,14 @@ h1 { font-size: 4.5rem; line-height: 1; margin: 0; font-weight: 700; }
     padding: 1rem 2rem;
     text-decoration: none;
     font-weight: bold;
-    margin-right: 1rem;
+    text-transform: uppercase;
+    font-size: 0.8rem;
 }
 
 footer {
     text-align: center;
     padding: 4rem;
-    font-size: 0.8rem;
+    border-top: 1px solid #111;
+    letter-spacing: 3px;
     color: #444;
 }
