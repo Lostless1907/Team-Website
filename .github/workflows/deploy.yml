@@ -20,8 +20,8 @@ jobs:
       - name: Compile Physics Engine
         run: |
           mkdir -p website/wasm
-          # Explicitly pointing to your cpp-code folder
-          emcc cpp-code/src/examples/quadrotor_sim.cpp -Icpp-code/include \
+          # Using *.cpp grabs all 3 of your physics files automatically
+          emcc cpp-code/*.cpp -Icpp-code/include \
             -o website/wasm/engine.js \
             -s WASM=1 \
             -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
