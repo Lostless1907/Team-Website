@@ -26,12 +26,8 @@ jobs:
       - name: Compile Physics Engine
         run: |
           mkdir -p website/wasm
-          
-          # Find ONLY .cpp files. DO NOT include .hpp files here.
-          SIM_FILES=$(find ./cpp-code -name "*.cpp")
-          
-          # The -I flag tells the compiler where to look for your .hpp files
-          emcc $SIM_FILES -I./cpp-code/include \
+          # We point specifically to cpp-code and our new engine.cpp
+          emcc cpp-code/engine.cpp -Icpp-code/include \
             -o website/wasm/engine.js \
             -s WASM=1 \
             -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
