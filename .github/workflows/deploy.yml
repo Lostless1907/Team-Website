@@ -17,49 +17,28 @@ jobs:
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
 
-      - name: DEBUG - List All Files
-        run: |
-          echo "--- REPO STRUCTURE START ---"
-          ls -R
-          echo "--- REPO STRUCTURE END ---"
-on:
-  push:
-    branches: [main]
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Emscripten
-        uses: mymindstorm/setup-emsdk@v14
-
       - name: Compile Physics Engine
         run: |
           mkdir -p website/wasm
-          # We search the whole repo for your .hpp files and compile them 
-          # by treating them as headers, but we need at least one .cpp logic.
-          # If you only have .hpp, we will use this command:
-          emcc $(find . -name "*.cpp") -I./cpp-code/include \
+          # Find any .cpp file in the repo, ignoring the website folder
+          SIM_FILES=$(find . -type f -name "*.cpp" -not -path "*/website/*")
+          
+          # Find the include directory
+          INCLUDE_DIR=$(find . -name "include" -type d -not -path "*/website/*" | head -n 1)
+
+          # If no .cpp files exist, we create a dummy one so the compiler doesn't crash
+          if [ -z "$SIM_FILES" ]; then
+            echo '#include <emscripten.h>
+            extern "C" { EMSCRIPTEN_KEEPALIVE int main() { return 0; } }' > dummy.cpp
+            SIM_FILES="dummy.cpp"
+          fi
+
+          emcc $SIM_FILES -I$INCLUDE_DIR \
             -o website/wasm/engine.js \
             -s WASM=1 \
             -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
             -s EXPORTED_FUNCTIONS='["_main"]' \
             -s ALLOW_MEMORY_GROWTH=1
-
-      - name: Upload Artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './website'
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
