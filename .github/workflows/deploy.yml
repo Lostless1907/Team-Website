@@ -20,15 +20,14 @@ jobs:
       - name: Compile Physics Engine
         run: |
           mkdir -p website/wasm
-          emcc cpp/src/examples/quadrotor_sim.cpp -Icpp/include \
+          # Explicitly pointing to your cpp-code folder
+          emcc cpp-code/src/examples/quadrotor_sim.cpp -Icpp-code/include \
             -o website/wasm/engine.js \
             -s WASM=1 \
             -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
-            -s EXPORTED_FUNCTIONS='["_main"]' \
-            -s ALLOW_MEMORY_GROWTH=1
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+            -s EXPORTED_FUNCTIONS='["_main", "_init_sim", "_step_physics"]' \
+            -s ALLOW_MEMORY_GROWTH=1 \
+            -s NO_EXIT_RUNTIME=1
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
