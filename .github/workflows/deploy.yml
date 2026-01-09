@@ -19,9 +19,14 @@ jobs:
 
       - name: Compile Physics Engine
         run: |
+          # 1. Create the destination folder inside website
           mkdir -p website/wasm
-          # Using *.cpp grabs all 3 of your physics files automatically
-          emcc cpp-code/*.cpp -Icpp-code/include \
+          
+          # 2. Compile all .cpp files found in your cpp-code folder
+          # We use find to grab everything in case they are in subfolders
+          SIM_FILES=$(find cpp-code -name "*.cpp")
+          
+          emcc $SIM_FILES -Icpp-code/include \
             -o website/wasm/engine.js \
             -s WASM=1 \
             -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
@@ -32,7 +37,10 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './website'
+          path: './website' # Only the website folder gets deployed to the internet
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
