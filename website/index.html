@@ -3,94 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inverse Matrix | Robotics & Computational Physics</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Inverse Matrix | Robotics & Physics</title>
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <canvas id="matrixCanvas"></canvas>
 
     <nav class="navbar">
         <div class="logo">Inverse<span>Matrix</span></div>
-        <ul class="nav-links">
-            <li><a href="#about">The Identity</a></li>
-            <li><a href="#simulations">Dynamics</a></li>
-            <li><a href="#team">Researchers</a></li>
-            <li><a href="https://github.com/Lostless1907/Team-Website" class="btn-github">View Source</a></li>
-        </ul>
     </nav>
-
-    <script src="wasm/engine.js"></script> <script src="script.js"></script>      ```
 
     <header class="hero">
         <div class="hero-content">
-            <div class="badge">SYSTEM STATUS: OPTIMIZED</div>
-            <h1>Solving the <span class="highlight">Unsolvable</span>.</h1>
-            <p>A Jammu-based elite engineering collective. We specialize in inverting complex physical constraints into elegant robotic solutions.</p>
-            <div class="hero-btns">
-                <a href="#simulations" class="btn-primary">Initialize Sim</a>
-                <a href="#about" class="btn-secondary">Technical Specs</a>
-            </div>
+            <div class="badge">JAMMU // PHYSICS ENGINE</div>
+            <h1>Solving the <span class="highlight">Inverse</span>.</h1>
+            <p>Advanced Robotics and Computational Dynamics Engineering.</p>
+            <div id="altitude-display">WAITING FOR ENGINE...</div>
         </div>
     </header>
 
-    <section id="about" class="container">
-        <div class="section-header">
-            <h2>The Inverse Philosophy</h2>
-            <p>In mathematics, an inverse matrix $A^{-1}$ undoes the effect of a transformation. We apply this to robotics—reversing the desired output into the necessary input.</p>
-        </div>
-        
-        [Image of Inverse Matrix calculation steps]
-
-        <div class="logic-grid">
-            <div class="logic-box">
-                <h4>Det(A) ≠ 0</h4>
-                <p>Just as a matrix must be non-singular to be inverted, our team focuses on non-obvious, unique solutions to flight dynamics and hardware control.</p>
-            </div>
-            <div class="logic-box">
-                <h4>Linear Algebra Core</h4>
-                <p>From Jacobian matrices in robotic arms to state-space representations in flight software, linear algebra is our primary language.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="simulations" class="container dark-section">
-        <h2>Mathematical Frameworks</h2>
-        <div class="grid">
-            <div class="card">
-                <div class="icon">\[ A^{-1} \]</div>
-                <h3>Inverse Kinematics</h3>
-                <p>Deriving the joint angles required to reach a specific spatial coordinate ($x, y, z$).</p>
-                [Image of Inverse Kinematics of a robotic arm]
-            </div>
-            <div class="card">
-                <div class="icon">\[ \int \]</div>
-                <h3>State Estimation</h3>
-                <p>Using Extended Kalman Filters to invert noisy sensor data into precise orientation estimates.</p>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <p>TERMINAL: INVERSE_MATRIX // JAMMU, IN // &copy; 2026</p>
-    </footer>
-
+    <script src="./wasm/engine.js"></script>
+    <script src="./script.js"></script>
+    
     <script>
+        // Matrix Rain Background Logic
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-
-        const characters = "01ABCDEFGHIGKLMNOPQRSTUVXYZ";
+        const characters = "0101010101";
         const fontSize = 16;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
-
         function draw() {
             ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#00d4ff"; // Blue Matrix color
+            ctx.fillStyle = "#00d4ff";
             ctx.font = fontSize + "px monospace";
-
             for (let i = 0; i < drops.length; i++) {
                 const text = characters.charAt(Math.floor(Math.random() * characters.length));
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
@@ -100,22 +49,7 @@
         }
         setInterval(draw, 33);
     </script>
-    <script src="wasm/engine.js"></script>
-<script>
-  Module.onRuntimeInitialized = () => {
-    console.log("Inverse Matrix Engine Live.");
-  };
-</script>
-    <section id="live-demo" class="container">
-    <div class="terminal-box">
-        <h3 id="altitude-display">ALTITUDE: 0.00m</h3>
-        <div class="sky">
-            <div id="drone-visual">🛸</div>
-        </div>
-    </div>
-</section>
-
-<script src="wasm/engine.js"></script>
-<script src="script.js"></script>
+</body>
+</html>
 </body>
 </html>
