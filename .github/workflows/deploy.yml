@@ -22,8 +22,6 @@ jobs:
           echo "--- REPO STRUCTURE START ---"
           ls -R
           echo "--- REPO STRUCTURE END ---"
-
-      name: Zero-Hustle-Deploy
 on:
   push:
     branches: [main]
