@@ -1,0 +1,70 @@
+:root {
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --text: #e2e8f0;
+    --accent: #38bdf8;
+    --font-main: 'Inter', system-ui, sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-main);
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 1.5rem 5%;
+    background: rgba(15, 23, 42, 0.95);
+    position: sticky;
+    top: 0;
+}
+
+.logo { font-weight: 700; font-size: 1.5rem; }
+.logo span { color: var(--accent); }
+
+.nav-links { list-style: none; display: flex; gap: 2rem; }
+.nav-links a { color: var(--text); text-decoration: none; font-weight: 500; }
+.btn-github { border: 1px solid var(--accent); padding: 0.5rem 1rem; border-radius: 4px; }
+
+.hero {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+}
+
+.hero h1 { font-size: 4rem; margin-bottom: 1rem; }
+.btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    padding: 1rem 2rem;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 2rem;
+}
+
+.container { padding: 4rem 10%; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+.card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 8px;
+    border-top: 3px solid var(--accent);
+}
+
+.tag {
+    font-size: 0.8rem;
+    background: #334155;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+}
