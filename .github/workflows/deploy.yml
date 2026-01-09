@@ -21,21 +21,18 @@ jobs:
         run: |
           mkdir -p website/wasm
           
-          # This command looks for ANY .cpp file anywhere in the repo 
-          # but ignores the ones already in the website folder.
-          SIM_FILES=$(find . -name "*.cpp" -not -path "./website/*")
+          # This finds files ending in .cpp, .CPP, .cc, or .cxx
+          SIM_FILES=$(find . -iname "*.cpp" -o -iname "*.cc" -o -iname "*.cxx")
           
-          # This command finds the include directory automatically
-          INCLUDE_DIR=$(find . -name "include" -type d -not -path "./website/*" | head -n 1)
+          echo "DEBUG: Files found -> $SIM_FILES"
 
-          echo "Found these files: $SIM_FILES"
-          echo "Using include dir: $INCLUDE_DIR"
-
-          # Check if we actually found files before running emcc
           if [ -z "$SIM_FILES" ]; then
-            echo "ERROR: No .cpp files found in the repository!"
+            echo "CRITICAL ERROR: No C++ files found! Check your folder: cpp-code"
             exit 1
           fi
+
+          # Find the include directory
+          INCLUDE_DIR=$(find . -name "include" -type d | head -n 1)
 
           emcc $SIM_FILES -I$INCLUDE_DIR \
             -o website/wasm/engine.js \
@@ -48,10 +45,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './website' # Only the website folder gets deployed to the internet
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+          path: './website'
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
