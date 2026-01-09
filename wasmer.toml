@@ -1,0 +1,15 @@
+[package]
+name = "aerorobotics/physics-engine"
+version = "1.0.0"
+description = "High-performance Quadrotor Physics & PID Control Engine"
+license = "MIT"
+repository = "https://github.com/your-org/physics-robotics-team"
+
+[[module]]
+name = "quad_sim"
+source = "build/quad_sim.wasm"
+abi = "wasi"
+
+[[command]]
+name = "run-sim"
+module = "quad_sim"
