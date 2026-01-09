@@ -1,0 +1,23 @@
+name: Physics Engine CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install CMake
+      run: sudo apt-get install cmake
+      
+    - name: Build Project
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make
+        
+    - name: Run Simulation Test
+      run: ./build/quad_sim
