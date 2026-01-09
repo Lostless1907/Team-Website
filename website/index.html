@@ -3,75 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Positron | Jammu's Physics & Robotics Elite</title>
+    <title>Inverse Matrix | Robotics & Computational Physics</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="glow-bg"></div>
-    
+    <canvas id="matrixCanvas"></canvas>
+
     <nav class="navbar">
-        <div class="logo">P<span>ositron</span></div>
+        <div class="logo">Inverse<span>Matrix</span></div>
         <ul class="nav-links">
-            <li><a href="#about">The Core</a></li>
-            <li><a href="#simulations">Simulations</a></li>
+            <li><a href="#about">The Identity</a></li>
+            <li><a href="#simulations">Dynamics</a></li>
             <li><a href="#team">Researchers</a></li>
-            <li><a href="https://github.com/Lostless1907/Team-Website" class="btn-github">Source Code</a></li>
+            <li><a href="https://github.com/Lostless1907/Team-Website" class="btn-github">View Source</a></li>
         </ul>
     </nav>
 
     <header class="hero">
         <div class="hero-content">
-            <div class="badge">EST. 2026 | JAMMU, IN</div>
-            <h1>Collision of <span class="highlight">Physics</span> & <span class="highlight">Code</span>.</h1>
-            <p>We are a high-IQ engineering collective solving complex robotics and computational dynamics problems through antimatter-grade logic.</p>
+            <div class="badge">SYSTEM STATUS: OPTIMIZED</div>
+            <h1>Solving the <span class="highlight">Unsolvable</span>.</h1>
+            <p>A Jammu-based elite engineering collective. We specialize in inverting complex physical constraints into elegant robotic solutions.</p>
             <div class="hero-btns">
-                <a href="#simulations" class="btn-primary">Explore Simulations</a>
-                <a href="#about" class="btn-secondary">Our Philosophy</a>
+                <a href="#simulations" class="btn-primary">Initialize Sim</a>
+                <a href="#about" class="btn-secondary">Technical Specs</a>
             </div>
         </div>
     </header>
 
     <section id="about" class="container">
         <div class="section-header">
-            <h2>Why "Positron"?</h2>
-            <p>In the foothills of the Himalayas, we build the brains for the robots of tomorrow.</p>
+            <h2>The Inverse Philosophy</h2>
+            <p>In mathematics, an inverse matrix $A^{-1}$ undoes the effect of a transformation. We apply this to robotics—reversing the desired output into the necessary input.</p>
         </div>
         
-
-[Image of positron electron pair production]
+        [Image of Inverse Matrix calculation steps]
 
         <div class="logic-grid">
             <div class="logic-box">
-                <h4>01. First Principles</h4>
-                <p>We don't just use libraries; we derive the physics. From Lagrangian mechanics to PID stability, we start at the atom.</p>
+                <h4>Det(A) ≠ 0</h4>
+                <p>Just as a matrix must be non-singular to be inverted, our team focuses on non-obvious, unique solutions to flight dynamics and hardware control.</p>
             </div>
             <div class="logic-box">
-                <h4>02. Computational Efficiency</h4>
-                <p>Our code is optimized for embedded systems where every CPU cycle and byte of RAM matters.</p>
+                <h4>Linear Algebra Core</h4>
+                <p>From Jacobian matrices in robotic arms to state-space representations in flight software, linear algebra is our primary language.</p>
             </div>
         </div>
     </section>
 
     <section id="simulations" class="container dark-section">
-        <h2>Active Simulations</h2>
+        <h2>Mathematical Frameworks</h2>
         <div class="grid">
             <div class="card">
-                <div class="icon">⚛️</div>
-                <h3>Rigid Body Dynamics</h3>
-                <p>6-DOF simulation of complex aerial vehicles using C++ RK4 integrators.</p>
+                <div class="icon">\[ A^{-1} \]</div>
+                <h3>Inverse Kinematics</h3>
+                <p>Deriving the joint angles required to reach a specific spatial coordinate ($x, y, z$).</p>
+                [Image of Inverse Kinematics of a robotic arm]
             </div>
             <div class="card">
-                <div class="icon">🤖</div>
-                <h3>Kinematic Solvers</h3>
-                <p>Inverse kinematics for multi-joint robotic arms designed for high-precision tasks.</p>
+                <div class="icon">\[ \int \]</div>
+                <h3>State Estimation</h3>
+                <p>Using Extended Kalman Filters to invert noisy sensor data into precise orientation estimates.</p>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>Built by Team Positron &bull; Jammu, J&K &bull; &copy; 2026</p>
+        <p>TERMINAL: INVERSE_MATRIX // JAMMU, IN // &copy; 2026</p>
     </footer>
-</body>
-</html>
+
+    <script>
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const characters = "01ABCDEFGHIGKLMNOPQRSTUVXYZ";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00d4ff"; // Blue Matrix color
+            ctx.font = fontSize + "px monospace";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 33);
+    </script>
 </body>
 </html>
