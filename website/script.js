@@ -1,33 +1,56 @@
-let physicsStep;
+// --- Inverse Matrix Bridge Logic ---
 
+let physicsStep;
+let altitude = 0;
+let isEngineLoaded = false;
+
+// 1. Initialize the Wasm Module
 Module.onRuntimeInitialized = () => {
-    console.log("Inverse Matrix Engine: Connected.");
+    console.log("INVERSE_MATRIX_ENGINE: ONLINE");
     
-    // Wrap the C++ functions for easy JS use
+    // Bridge the C++ functions to JS
+    // cwrap(name, return_type, [arg_types])
     physicsStep = Module.cwrap('step_physics', 'number', ['number', 'number']);
     const initSim = Module.cwrap('init_sim', null, ['number']);
 
-    initSim(0.0); // Start at 0 altitude
-    runSimulation();
+    // Initialize with 0.0 altitude
+    initSim(0.0);
+    isEngineLoaded = true;
+    
+    // Start the real-time loop
+    updateLoop();
 };
 
-let altitude = 0;
-function runSimulation() {
-    // Step the C++ physics (0.016s is approx 60fps)
-    // Passing 0 as the second argument (no thrust override)
-    altitude = physicsStep(0.016, 0);
+// 2. The High-Speed Physics Loop
+function updateLoop() {
+    if (!isEngineLoaded) return;
 
-    // Update the website UI
-    const display = document.getElementById('altitude-display');
-    if (display) {
-        display.innerText = `ALTITUDE: ${altitude.toFixed(2)}m`;
+    // Time delta (0.016s = 60fps)
+    const dt = 0.016; 
+    const manualThrust = 0; // Can be linked to a slider/button later
+
+    // CALL THE C++ ENGINE
+    altitude = physicsStep(dt, manualThrust);
+
+    // Update the UI
+    renderUI();
+
+    // Loop at 60fps
+    requestAnimationFrame(updateLoop);
+}
+
+// 3. Render the output to the page
+function renderUI() {
+    // Update text display
+    const altDisplay = document.getElementById('altitude-display');
+    if (altDisplay) {
+        altDisplay.innerText = `ALTITUDE: ${altitude.toFixed(3)}m`;
     }
 
-    // Move a visual element if you have one
+    // Update visual drone position
     const drone = document.getElementById('drone-visual');
     if (drone) {
+        // Simple scaling: 1m = 20px
         drone.style.bottom = `${altitude * 20}px`; 
     }
-
-    requestAnimationFrame(runSimulation);
 }
