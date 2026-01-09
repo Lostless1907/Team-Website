@@ -1,9 +1,10 @@
 :root {
-    --bg: #0f172a;
-    --card-bg: #1e293b;
-    --text: #e2e8f0;
-    --accent: #38bdf8;
-    --font-main: 'Inter', system-ui, sans-serif;
+    --bg: #050505;
+    --card-bg: #111111;
+    --text: #ffffff;
+    --accent: #00d4ff;
+    --accent-dim: rgba(0, 212, 255, 0.3);
+    --font-main: 'JetBrains Mono', monospace; /* Great for a high-IQ/dev feel */
 }
 
 body {
@@ -11,60 +12,94 @@ body {
     font-family: var(--font-main);
     background-color: var(--bg);
     color: var(--text);
-    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.glow-bg {
+    position: fixed;
+    top: -10%;
+    left: -10%;
+    width: 40%;
+    height: 40%;
+    background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+    filter: blur(80px);
+    z-index: -1;
 }
 
 .navbar {
     display: flex;
     justify-content: space-between;
-    padding: 1.5rem 5%;
-    background: rgba(15, 23, 42, 0.95);
-    position: sticky;
-    top: 0;
+    align-items: center;
+    padding: 2rem 10%;
 }
 
-.logo { font-weight: 700; font-size: 1.5rem; }
+.logo { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; }
 .logo span { color: var(--accent); }
 
-.nav-links { list-style: none; display: flex; gap: 2rem; }
-.nav-links a { color: var(--text); text-decoration: none; font-weight: 500; }
-.btn-github { border: 1px solid var(--accent); padding: 0.5rem 1rem; border-radius: 4px; }
+.nav-links { list-style: none; display: flex; gap: 3rem; }
+.nav-links a { text-decoration: none; color: #888; transition: 0.3s; font-size: 0.9rem; }
+.nav-links a:hover { color: var(--accent); }
 
 .hero {
-    height: 80vh;
+    height: 90vh;
     display: flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+    padding: 0 10%;
 }
 
-.hero h1 { font-size: 4rem; margin-bottom: 1rem; }
-.btn-primary {
-    background: var(--accent);
-    color: var(--bg);
-    padding: 1rem 2rem;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 5px;
+.badge {
     display: inline-block;
-    margin-top: 2rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #333;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    margin-bottom: 1.5rem;
+    color: var(--accent);
 }
 
-.container { padding: 4rem 10%; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+h1 { font-size: 4.5rem; line-height: 1; margin: 0; font-weight: 700; }
+.highlight { color: var(--accent); text-shadow: 0 0 20px var(--accent-dim); }
+
+.container { padding: 8rem 10%; }
+
+.logic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-top: 4rem;
+}
+
+.logic-box {
+    border-left: 2px solid #222;
+    padding-left: 2rem;
+}
+
+.logic-box h4 { color: var(--accent); margin-bottom: 0.5rem; }
 
 .card {
     background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 8px;
-    border-top: 3px solid var(--accent);
+    padding: 3rem;
+    border: 1px solid #222;
+    transition: 0.4s;
 }
 
-.tag {
+.card:hover {
+    border-color: var(--accent);
+    transform: translateY(-10px);
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: black;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    font-weight: bold;
+    margin-right: 1rem;
+}
+
+footer {
+    text-align: center;
+    padding: 4rem;
     font-size: 0.8rem;
-    background: #334155;
-    padding: 0.2rem 0.6rem;
-    border-radius: 4px;
-    margin-right: 0.5rem;
+    color: #444;
 }
