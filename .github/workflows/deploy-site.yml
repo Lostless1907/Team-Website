@@ -1,0 +1,16 @@
+name: Deploy Website
+on:
+  push:
+    branches: [main]
+    paths: ['website/**'] # Only runs if files in /website change
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/upload-pages-artifact@v2
+        with:
+          path: './website' # Point this to your website folder
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v2
