@@ -7,17 +7,17 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     
     - name: Install CMake
-      run: sudo apt-get install cmake
+      run: sudo apt-get update && sudo apt-get install -y cmake
       
-    - name: Build Project
+    - name: Build and Run Simulation
+     
+      working-directory: ./cpp 
       run: |
-        mkdir build
+        mkdir -p build
         cd build
         cmake ..
         make
-        
-    - name: Run Simulation Test
-      run: ./build/quad_sim
+        ./quad_sim # Runs the sim to verify it doesn't crash
