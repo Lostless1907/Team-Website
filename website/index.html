@@ -98,5 +98,11 @@
         }
         setInterval(draw, 33);
     </script>
+    <script src="wasm/engine.js"></script>
+<script>
+  Module.onRuntimeInitialized = () => {
+    console.log("Inverse Matrix Engine Live.");
+  };
+</script>
 </body>
 </html>
