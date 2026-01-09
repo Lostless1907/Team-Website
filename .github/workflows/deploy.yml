@@ -19,14 +19,25 @@ jobs:
 
       - name: Compile Physics Engine
         run: |
-          # 1. Create the destination folder inside website
           mkdir -p website/wasm
           
-          # 2. Compile all .cpp files found in your cpp-code folder
-          # We use find to grab everything in case they are in subfolders
-          SIM_FILES=$(find cpp-code -name "*.cpp")
+          # This command looks for ANY .cpp file anywhere in the repo 
+          # but ignores the ones already in the website folder.
+          SIM_FILES=$(find . -name "*.cpp" -not -path "./website/*")
           
-          emcc $SIM_FILES -Icpp-code/include \
+          # This command finds the include directory automatically
+          INCLUDE_DIR=$(find . -name "include" -type d -not -path "./website/*" | head -n 1)
+
+          echo "Found these files: $SIM_FILES"
+          echo "Using include dir: $INCLUDE_DIR"
+
+          # Check if we actually found files before running emcc
+          if [ -z "$SIM_FILES" ]; then
+            echo "ERROR: No .cpp files found in the repository!"
+            exit 1
+          fi
+
+          emcc $SIM_FILES -I$INCLUDE_DIR \
             -o website/wasm/engine.js \
             -s WASM=1 \
             -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
