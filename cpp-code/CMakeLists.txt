@@ -7,5 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Include directories
 include_directories(include)
 
-# Main Example Simulation
-add_executable(quad_sim src/examples/quadrotor_sim.cpp)
+# Build using YOUR actual files
+add_executable(quad_sim 
+    main.cpp
+    engine.cpp
+)
