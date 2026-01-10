@@ -1,56 +1,49 @@
-// --- Inverse Matrix Bridge Logic ---
+// Cool Matrix Effect
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
 
-let physicsStep;
-let altitude = 0;
-let isEngineLoaded = false;
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
 
-// 1. Initialize the Wasm Module
-Module.onRuntimeInitialized = () => {
-    console.log("INVERSE_MATRIX_ENGINE: ONLINE");
-    
-    // Bridge the C++ functions to JS
-    // cwrap(name, return_type, [arg_types])
-    physicsStep = Module.cwrap('step_physics', 'number', ['number', 'number']);
-    const initSim = Module.cwrap('init_sim', null, ['number']);
+const chars = "01Δ∇λΣΦΩABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const fontSize = 16;
+const columns = Math.floor(canvas.width / fontSize);
+const drops = Array(columns).fill(0);
 
-    // Initialize with 0.0 altitude
-    initSim(0.0);
-    isEngineLoaded = true;
-    
-    // Start the real-time loop
-    updateLoop();
-};
+function drawMatrix() {
+  ctx.fillStyle = "rgba(2, 4, 20, 0.08)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-// 2. The High-Speed Physics Loop
-function updateLoop() {
-    if (!isEngineLoaded) return;
+  ctx.fillStyle = "#2f9bff";
+  ctx.font = `${fontSize}px monospace`;
 
-    // Time delta (0.016s = 60fps)
-    const dt = 0.016; 
-    const manualThrust = 0; // Can be linked to a slider/button later
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
 
-    // CALL THE C++ ENGINE
-    altitude = physicsStep(dt, manualThrust);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.98)
+      drops[i] = 0;
 
-    // Update the UI
-    renderUI();
-
-    // Loop at 60fps
-    requestAnimationFrame(updateLoop);
+    drops[i]++;
+  }
 }
 
-// 3. Render the output to the page
-function renderUI() {
-    // Update text display
-    const altDisplay = document.getElementById('altitude-display');
-    if (altDisplay) {
-        altDisplay.innerText = `ALTITUDE: ${altitude.toFixed(3)}m`;
-    }
+setInterval(drawMatrix, 33);
 
-    // Update visual drone position
-    const drone = document.getElementById('drone-visual');
-    if (drone) {
-        // Simple scaling: 1m = 20px
-        drone.style.bottom = `${altitude * 20}px`; 
-    }
+// Term section
+const typing = document.querySelector(".typing");
+const text = "> computational environment online";
+let idx = 0;
+
+function type() {
+  if (idx < text.length) {
+    typing.textContent += text[idx++];
+    setTimeout(type, 35);
+  }
 }
+type();
+
