@@ -1,39 +1,90 @@
-name: Emergency-Fix
+name: Deploy to GitHub Pages
+
 on:
   push:
     branches: [main]
+  workflow_dispatch:  # Allows manual trigger
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Prevent concurrent deployments
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
+      - name: Checkout
+        uses: actions/checkout@v4
+      
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
-
-      - name: Force Build Engine
+        with:
+          version: 'latest'
+      
+      - name: Verify Emscripten
         run: |
+          emcc --version
+          which emcc
+      
+      - name: Build WebAssembly Engine
+        run: |
+          # Create output directory
           mkdir -p website/wasm
-          # Create a working C++ file on the fly so we don't depend on folder names
-          echo '#include <emscripten.h>
-          extern "C" { 
-            EMSCRIPTEN_KEEPALIVE int main() { return 0; }
-            EMSCRIPTEN_KEEPALIVE double get_val() { return 42.0; }
-          }' > bridge.cpp
           
-          # Compile it
-          emcc bridge.cpp -o website/wasm/engine.js -s WASM=1 -s NO_EXIT_RUNTIME=1
+          # Create a minimal C++ bridge file
+          cat > bridge.cpp << 'EOF'
+          #include <emscripten.h>
+          #include <emscripten/bind.h>
 
-      - name: Upload and Deploy
+          extern "C" {
+            EMSCRIPTEN_KEEPALIVE 
+            int main() { 
+              return 0; 
+            }
+            
+            EMSCRIPTEN_KEEPALIVE 
+            double get_val() { 
+              return 42.0; 
+            }
+          }
+          EOF
+          
+          # Compile with proper flags
+          emcc bridge.cpp \
+            -o website/wasm/engine.js \
+            -s WASM=1 \
+            -s EXPORTED_RUNTIME_METHODS='["cwrap","ccall"]' \
+            -s EXPORTED_FUNCTIONS='["_main","_get_val"]' \
+            -s MODULARIZE=1 \
+            -s EXPORT_NAME='createModule' \
+            -s NO_EXIT_RUNTIME=1 \
+            -s ALLOW_MEMORY_GROWTH=1 \
+            -O3
+          
+          # Verify output files exist
+          ls -lh website/wasm/
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './website'
-      
-      - name: Deploy
+  
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
