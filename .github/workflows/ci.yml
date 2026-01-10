@@ -1,4 +1,4 @@
-name: C++ Physics Engine CI
+name: Build WebAssembly Physics Engine
 
 on: 
   push:
@@ -9,24 +9,34 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  build-wasm:
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout
       uses: actions/checkout@v4
     
-    - name: Install CMake
-      run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+    - name: Setup Emscripten
+      uses: mymindstorm/setup-emsdk@v14
+      with:
+        version: 'latest'
     
-    - name: Build C++ Project
+    - name: Build WebAssembly Module
       working-directory: ./cpp-code
       run: |
-        mkdir -p build
-        cd build
-        cmake ..
-        make
+        echo "🔨 Compiling to WebAssembly..."
         
-    - name: Run simulation
-      working-directory: ./cpp-code/build
-      run: ./quad_sim
+        emcc main.cpp engine.cpp \
+          -I./include \
+          -o physics.js \
+          -s WASM=1 \
+          -s EXPORTED_RUNTIME_METHODS='["cwrap","ccall"]' \
+          -s MODULARIZE=1 \
+          -s EXPORT_NAME='createPhysicsModule' \
+          -s NO_EXIT_RUNTIME=1 \
+          -s ALLOW_MEMORY_GROWTH=1 \
+          -s ENVIRONMENT='web' \
+          -O3
+        
+        echo "✅ Build successful!"
+        ls -lh physics.js physics.wasm
