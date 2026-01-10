@@ -34,7 +34,7 @@ jobs:
 
     emcc main.cpp engine.cpp \
       -I./include \
-      -o ../website/physics.js \
+      -o ../docs/physics.js \
       -s WASM=1 \
       -s EXPORTED_RUNTIME_METHODS='["cwrap","ccall"]' \
       -s MODULARIZE=1 \
@@ -44,7 +44,7 @@ jobs:
       -s ENVIRONMENT='web' \
       -O3
 
-    ls -lh ../website/physics.*
+    ls -lh ../docs/physics.*
         
         echo "WebAssembly build successful!"
         ls -lh physics.js physics.wasm
