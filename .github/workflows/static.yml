@@ -33,7 +33,7 @@ jobs:
       - name: Build Physics WebAssembly
         working-directory: ./cpp-code
         run: |
-          emcc main.cpp engine.cpp \
+          emcc engine.cpp \
             -I./include \
             -o ../docs/physics.js \
             -s WASM=1 \
@@ -43,6 +43,7 @@ jobs:
             -s NO_EXIT_RUNTIME=1 \
             -s ALLOW_MEMORY_GROWTH=1 \
             -s ENVIRONMENT='web' \
+            -s NO_ENTRY=1 \
             -O3
 
           ls -lh ../docs/physics.*
@@ -58,4 +59,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
 
