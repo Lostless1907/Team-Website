@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'cpp-code/**'
+      - '.github/workflows/ci.yml'
   pull_request:
     branches: [main]
 
@@ -21,10 +22,15 @@ jobs:
       with:
         version: 'latest'
     
+    - name: Verify Emscripten
+      run: |
+        emcc --version
+        echo "Emscripten ready"
+    
     - name: Build WebAssembly Module
       working-directory: ./cpp-code
       run: |
-        echo "🔨 Compiling to WebAssembly..."
+        echo "Compiling C++ to WebAssembly..."
         
         emcc main.cpp engine.cpp \
           -I./include \
@@ -38,5 +44,14 @@ jobs:
           -s ENVIRONMENT='web' \
           -O3
         
-        echo "✅ Build successful!"
+        echo "WebAssembly build successful!"
         ls -lh physics.js physics.wasm
+    
+    - name: Upload WASM artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: wasm-physics-engine
+        path: |
+          cpp-code/physics.js
+          cpp-code/physics.wasm
+        retention-days: 30
