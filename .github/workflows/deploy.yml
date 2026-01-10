@@ -21,30 +21,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
+      - name: Show repository structure
+        run: |
+          echo "=== Repository Structure ==="
+          ls -la
+          echo ""
+          echo "=== All files ==="
+          find . -type f -not -path '*/\.*' | head -20
+      
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
         with:
           version: 'latest'
       
-      - name: List project structure
+      - name: Create and Build WASM
         run: |
-          echo "Project structure:"
-          find . -type f \( -name "*.hpp" -o -name "*.cpp" -o -name "*.h" -o -name "*.c" \)
-      
-      - name: Build WebAssembly Engine
-        run: |
-          # Create output directory
+          # Create website/wasm directory if it doesn't exist
           mkdir -p website/wasm
           
-          # Create a main.cpp file that includes your .hpp files
-          cat > main.cpp << 'EOF'
+          # Create a simple C++ file for physics bridge
+          cat > physics_bridge.cpp << 'EOF'
           #include <emscripten.h>
           #include <emscripten/bind.h>
+          #include <cmath>
 
-          // Include your .hpp files here
-          // Adjust the paths based on your actual file locations
-          // Example: #include "physics/engine.hpp"
-          
           extern "C" {
             EMSCRIPTEN_KEEPALIVE 
             int main() { 
@@ -52,50 +52,36 @@ jobs:
             }
             
             EMSCRIPTEN_KEEPALIVE 
-            void initialize_physics() {
-              // Initialize your physics engine here
+            void init_physics() {
+              // Physics initialization
             }
             
             EMSCRIPTEN_KEEPALIVE 
-            void update_physics(double deltaTime) {
-              // Update physics simulation
+            void update_physics(double dt) {
+              // Physics update
+            }
+            
+            EMSCRIPTEN_KEEPALIVE
+            double calculate_force(double mass, double acceleration) {
+              return mass * acceleration;
             }
           }
           EOF
           
-          # Find all .hpp files and create include flags
-          HPP_FILES=$(find . -name "*.hpp" -not -path "./website/*")
-          INCLUDE_DIRS=$(find . -name "*.hpp" -not -path "./website/*" -exec dirname {} \; | sort -u | sed 's/^/-I/')
-          
-          echo "Include directories: $INCLUDE_DIRS"
-          
-          # Compile with all include directories
-          emcc main.cpp \
-            $INCLUDE_DIRS \
+          # Compile the physics bridge
+          emcc physics_bridge.cpp \
             -o website/wasm/engine.js \
             -s WASM=1 \
             -s EXPORTED_RUNTIME_METHODS='["cwrap","ccall"]' \
-            -s EXPORTED_FUNCTIONS='["_main","_initialize_physics","_update_physics"]' \
+            -s EXPORTED_FUNCTIONS='["_main","_init_physics","_update_physics","_calculate_force"]' \
             -s MODULARIZE=1 \
-            -s EXPORT_NAME='createModule' \
+            -s EXPORT_NAME='createPhysicsModule' \
             -s NO_EXIT_RUNTIME=1 \
             -s ALLOW_MEMORY_GROWTH=1 \
-            -O3 || {
-              echo "Compilation failed, creating dummy module"
-              # Fallback: create a minimal working module
-              cat > fallback.cpp << 'FALLBACK'
-          #include <emscripten.h>
-          extern "C" {
-            EMSCRIPTEN_KEEPALIVE int main() { return 0; }
-            EMSCRIPTEN_KEEPALIVE void init() {}
-            EMSCRIPTEN_KEEPALIVE void update(double dt) {}
-          }
-          FALLBACK
-              emcc fallback.cpp -o website/wasm/engine.js \
-                -s WASM=1 -s NO_EXIT_RUNTIME=1 -s ALLOW_MEMORY_GROWTH=1
-            }
+            -s ENVIRONMENT='web' \
+            -O3
           
-          # Verify output
+          echo "=== Build output ==="
           ls -lh website/wasm/
       
       - name: Setup Pages
