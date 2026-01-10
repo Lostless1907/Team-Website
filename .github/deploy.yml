@@ -40,7 +40,7 @@ jobs:
             
             emcc main.cpp engine.cpp \
               -I./include \
-              -o ../website/physics.js \
+              -o ../docs/physics.js \
               -s WASM=1 \
               -s EXPORTED_RUNTIME_METHODS='["cwrap","ccall"]' \
               -s MODULARIZE=1 \
@@ -51,7 +51,7 @@ jobs:
               -O3
             
             echo "WASM compiled successfully!"
-            ls -lh ../website/physics.*
+            ls -lh ../docs/physics.*
           else
             echo "No Emscripten code detected, skipping WASM build"
           fi
@@ -62,7 +62,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './website'
+          path: './docs'
       
       - name: Deploy to GitHub Pages
         id: deployment
