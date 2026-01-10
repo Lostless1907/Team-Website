@@ -28,21 +28,23 @@ jobs:
         echo "Emscripten ready"
     
     - name: Build WebAssembly Module
-      working-directory: ./cpp-code
-      run: |
-        echo "Compiling C++ to WebAssembly..."
-        
-        emcc main.cpp engine.cpp \
-          -I./include \
-          -o physics.js \
-          -s WASM=1 \
-          -s EXPORTED_RUNTIME_METHODS='["cwrap","ccall"]' \
-          -s MODULARIZE=1 \
-          -s EXPORT_NAME='createPhysicsModule' \
-          -s NO_EXIT_RUNTIME=1 \
-          -s ALLOW_MEMORY_GROWTH=1 \
-          -s ENVIRONMENT='web' \
-          -O3
+  working-directory: ./cpp-code
+  run: |
+    echo "Compiling C++ to WebAssembly..."
+
+    emcc main.cpp engine.cpp \
+      -I./include \
+      -o ../website/physics.js \
+      -s WASM=1 \
+      -s EXPORTED_RUNTIME_METHODS='["cwrap","ccall"]' \
+      -s MODULARIZE=1 \
+      -s EXPORT_NAME='createPhysicsModule' \
+      -s NO_EXIT_RUNTIME=1 \
+      -s ALLOW_MEMORY_GROWTH=1 \
+      -s ENVIRONMENT='web' \
+      -O3
+
+    ls -lh ../website/physics.*
         
         echo "WebAssembly build successful!"
         ls -lh physics.js physics.wasm
