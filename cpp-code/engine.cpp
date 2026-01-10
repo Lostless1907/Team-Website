@@ -46,6 +46,4 @@ extern "C" {
         return altitude;
     }
 }
-    int main() {
-        return 0;
-    }
+  
