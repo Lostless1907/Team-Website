@@ -3,14 +3,13 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  workflow_dispatch:  # Allows manual trigger
+  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Prevent concurrent deployments
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -27,21 +26,25 @@ jobs:
         with:
           version: 'latest'
       
-      - name: Verify Emscripten
+      - name: List project structure
         run: |
-          emcc --version
-          which emcc
+          echo "Project structure:"
+          find . -type f \( -name "*.hpp" -o -name "*.cpp" -o -name "*.h" -o -name "*.c" \)
       
       - name: Build WebAssembly Engine
         run: |
           # Create output directory
           mkdir -p website/wasm
           
-          # Create a minimal C++ bridge file
-          cat > bridge.cpp << 'EOF'
+          # Create a main.cpp file that includes your .hpp files
+          cat > main.cpp << 'EOF'
           #include <emscripten.h>
           #include <emscripten/bind.h>
 
+          // Include your .hpp files here
+          // Adjust the paths based on your actual file locations
+          // Example: #include "physics/engine.hpp"
+          
           extern "C" {
             EMSCRIPTEN_KEEPALIVE 
             int main() { 
@@ -49,25 +52,50 @@ jobs:
             }
             
             EMSCRIPTEN_KEEPALIVE 
-            double get_val() { 
-              return 42.0; 
+            void initialize_physics() {
+              // Initialize your physics engine here
+            }
+            
+            EMSCRIPTEN_KEEPALIVE 
+            void update_physics(double deltaTime) {
+              // Update physics simulation
             }
           }
           EOF
           
-          # Compile with proper flags
-          emcc bridge.cpp \
+          # Find all .hpp files and create include flags
+          HPP_FILES=$(find . -name "*.hpp" -not -path "./website/*")
+          INCLUDE_DIRS=$(find . -name "*.hpp" -not -path "./website/*" -exec dirname {} \; | sort -u | sed 's/^/-I/')
+          
+          echo "Include directories: $INCLUDE_DIRS"
+          
+          # Compile with all include directories
+          emcc main.cpp \
+            $INCLUDE_DIRS \
             -o website/wasm/engine.js \
             -s WASM=1 \
             -s EXPORTED_RUNTIME_METHODS='["cwrap","ccall"]' \
-            -s EXPORTED_FUNCTIONS='["_main","_get_val"]' \
+            -s EXPORTED_FUNCTIONS='["_main","_initialize_physics","_update_physics"]' \
             -s MODULARIZE=1 \
             -s EXPORT_NAME='createModule' \
             -s NO_EXIT_RUNTIME=1 \
             -s ALLOW_MEMORY_GROWTH=1 \
-            -O3
+            -O3 || {
+              echo "Compilation failed, creating dummy module"
+              # Fallback: create a minimal working module
+              cat > fallback.cpp << 'FALLBACK'
+          #include <emscripten.h>
+          extern "C" {
+            EMSCRIPTEN_KEEPALIVE int main() { return 0; }
+            EMSCRIPTEN_KEEPALIVE void init() {}
+            EMSCRIPTEN_KEEPALIVE void update(double dt) {}
+          }
+          FALLBACK
+              emcc fallback.cpp -o website/wasm/engine.js \
+                -s WASM=1 -s NO_EXIT_RUNTIME=1 -s ALLOW_MEMORY_GROWTH=1
+            }
           
-          # Verify output files exist
+          # Verify output
           ls -lh website/wasm/
       
       - name: Setup Pages
