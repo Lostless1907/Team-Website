@@ -1,21 +1,32 @@
-name: Physics Engine CI
-on: [push, pull_request]
+name: C++ Physics Engine CI
+
+on: 
+  push:
+    branches: [main]
+    paths:
+      - 'cpp-code/**'
+  pull_request:
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v4
     
     - name: Install CMake
-      run: sudo apt-get update && sudo apt-get install -y cmake
-      
-    - name: Build and Run Simulation
+      run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+    
+    - name: Build C++ Project
       working-directory: ./cpp-code
       run: |
         mkdir -p build
         cd build
         cmake ..
         make
-        ./quad_sim # Runs the sim to verify it doesn't crash
+        
+    - name: Run simulation
+      working-directory: ./cpp-code/build
+      run: ./quad_sim
