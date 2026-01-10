@@ -10,79 +10,12 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: Show repository structure
-        run: |
-          echo "=== Repository Structure ==="
-          ls -la
-          echo ""
-          echo "=== All files ==="
-          find . -type f -not -path '*/\.*' | head -20
-      
-      - name: Setup Emscripten
-        uses: mymindstorm/setup-emsdk@v14
-        with:
-          version: 'latest'
-      
-      - name: Create and Build WASM
-        run: |
-          # Create website/wasm directory if it doesn't exist
-          mkdir -p website/wasm
-          
-          # Create a simple C++ file for physics bridge
-          cat > physics_bridge.cpp << 'EOF'
-          #include <emscripten.h>
-          #include <emscripten/bind.h>
-          #include <cmath>
-
-          extern "C" {
-            EMSCRIPTEN_KEEPALIVE 
-            int main() { 
-              return 0; 
-            }
-            
-            EMSCRIPTEN_KEEPALIVE 
-            void init_physics() {
-              // Physics initialization
-            }
-            
-            EMSCRIPTEN_KEEPALIVE 
-            void update_physics(double dt) {
-              // Physics update
-            }
-            
-            EMSCRIPTEN_KEEPALIVE
-            double calculate_force(double mass, double acceleration) {
-              return mass * acceleration;
-            }
-          }
-          EOF
-          
-          # Compile the physics bridge
-          emcc physics_bridge.cpp \
-            -o website/wasm/engine.js \
-            -s WASM=1 \
-            -s EXPORTED_RUNTIME_METHODS='["cwrap","ccall"]' \
-            -s EXPORTED_FUNCTIONS='["_main","_init_physics","_update_physics","_calculate_force"]' \
-            -s MODULARIZE=1 \
-            -s EXPORT_NAME='createPhysicsModule' \
-            -s NO_EXIT_RUNTIME=1 \
-            -s ALLOW_MEMORY_GROWTH=1 \
-            -s ENVIRONMENT='web' \
-            -O3
-          
-          echo "=== Build output ==="
-          ls -lh website/wasm/
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -90,15 +23,12 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './website'
-  
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
+          path: 'website'
+      
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
