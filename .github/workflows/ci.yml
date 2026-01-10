@@ -1,5 +1,4 @@
 name: Physics Engine CI
-
 on: [push, pull_request]
 
 jobs:
@@ -13,8 +12,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y cmake
       
     - name: Build and Run Simulation
-     
-      working-directory: ./cpp 
+      working-directory: ./cpp-code
       run: |
         mkdir -p build
         cd build
