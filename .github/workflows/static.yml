@@ -30,23 +30,30 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Build Physics WebAssembly
-        working-directory: ./cpp-code
+      - name: Compile Physics Engine
         run: |
-          emcc engine.cpp \
-            -I./include \
-            -o ../docs/physics.js \
+          mkdir -p website/wasm
+          
+          # Find all your C++ files in cpp-code
+          SIM_FILES=$(find ./cpp-code -name "*.cpp")
+          
+          # Find your include folder
+          INCLUDE_DIR=$(find ./cpp-code -name "include" -type d | head -n 1)
+          
+          echo "Compiling: $SIM_FILES"
+
+          emcc $SIM_FILES -I$INCLUDE_DIR \
+            -o website/wasm/engine.js \
             -s WASM=1 \
-            -s MODULARIZE=1 \
-            -s EXPORT_NAME='createPhysicsModule' \
-            -s EXPORTED_RUNTIME_METHODS='["cwrap","ccall"]' \
-            -s NO_EXIT_RUNTIME=1 \
+            -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
+            -s EXPORTED_FUNCTIONS='["_main", "_init_sim", "_step_physics"]' \
             -s ALLOW_MEMORY_GROWTH=1 \
-            -s ENVIRONMENT='web' \
-            -s NO_ENTRY=1 \
+            -s NO_EXIT_RUNTIME=1 \
+            --no-entry \
             -O3
 
-          ls -lh ../docs/physics.*
+          # Verify files exist before finishing
+          ls -lh website/wasm/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
