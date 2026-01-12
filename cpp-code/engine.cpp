@@ -45,5 +45,7 @@ extern "C" {
     double get_altitude() {
         return altitude;
     }
-}
+    }
+    int main() { return 0; }
+    }
   
